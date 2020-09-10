@@ -1,6 +1,9 @@
-const MidiPlayer = require("midi-player-js");
 const axios = require("axios");
 const pitchInfo = require("./pitchInfo.json");
+
+const MidiPlayer = require("midi-player-js");
+
+const audioContext = new AudioContext();
 
 const canvas = document.getElementById("canvas");
 ctx = canvas.getContext("2d");
@@ -13,24 +16,63 @@ canvas.width = size * dpr;
 ctx.scale(dpr, dpr);
 ctx.translate(size / 2, size / 2);
 
+// const canvas2 = document.getElementById("canvs");
+// ctx2 = canvas2.getContext("2d");
+
+// canvas2.height = size * dpr;
+// canvas2.width = size * dpr;
+// ctx2.scale(dpr, dpr);
+// ctx2.translate(size / 2, size / 2);
+
+ctx.globalCompositeOperation = "color";
+// ctx2.globalCompositeOperation = "color";
+
+let midiData;
 const getMidi = async () => {
-  const result = await axios.get("http://localhost:8080/midi-raw.mid", {
-    responseType: "arraybuffer",
-  });
+  const result = await axios.get(
+    "http://localhost:8080/006-b-flat-waltz-piano.mid",
+    {
+      responseType: "arraybuffer",
+    }
+  );
   const { data } = result;
+  midiData = data;
   return data;
 };
 
+let mp3Data;
+const getAudio = async () => {
+  const result = await axios.get(
+    "http://localhost:8080/006-b-flat-waltz-piano.mp3",
+    {
+      responseType: "arraybuffer",
+    }
+  );
+  const { data } = result;
+  mp3Data = await audioContext.decodeAudioData(data);
+  return mp3Data;
+};
+
+const playAudio = async () => {
+  const audioBuffer = await getAudio();
+  const source = audioContext.createBufferSource();
+  source.buffer = audioBuffer;
+  source.connect(audioContext.destination);
+  source.start();
+};
+
 async function visualize() {
-  const data = await getMidi();
+  const midi = await getMidi();
   const Player = new MidiPlayer.Player();
-  Player.loadArrayBuffer(data);
+  Player.loadArrayBuffer(midi);
+  await playAudio();
   Player.play();
 
   Player.on("midiEvent", function (event) {
     let pitch;
     let note;
     let squareSize;
+    console.log(event);
 
     let rgb;
     let alpha;
@@ -40,25 +82,35 @@ async function visualize() {
       pitch = event.noteName.replace(/([0-9]|[-])/g, "");
       note = pitchInfo[pitch];
       squareSize = size - (note.number * size) / 12;
-      rgb = note.color;
+      rgb = note.color.join(", ");
       alpha = event.velocity;
-      rgba = `${rgb.join(", ")}, 0.${alpha}`;
+      rgba = `${rgb}, 0.${alpha}`;
+      ctx.lineWidth = event.velocity;
+      // ctx2.lineWidth = event.velocity;
     }
 
-    if (event.name === "Note on") {
+    if (
+      event.name === "Note on" ||
+      (event.name === "Controller Change" &&
+        event.number === 64 &&
+        event.value === 127)
+    ) {
       ctx.beginPath();
       ctx.rect(0 - squareSize / 2, 0 - squareSize / 2, squareSize, squareSize);
-      ctx.fillStyle = `rgba(${rgba})`;
-      ctx.fill();
+      ctx.strokeStyle = `rgba(${rgba})`;
+      ctx.stroke();
     }
 
-    if (event.name === "Note off") {
-      ctx.clearRect(
-        0 - squareSize / 2,
-        0 - squareSize / 2,
-        squareSize,
-        squareSize
-      );
+    if (
+      (event.track === 2 && event.name === "Note on") ||
+      (event.name === "Controller Change" &&
+        event.number === 64 &&
+        event.value === 127)
+    ) {
+      // ctx2.beginPath();
+      // ctx2.rect(0 - squareSize / 2, 0 - squareSize / 2, squareSize, squareSize);
+      // ctx2.strokeStyle = `rgba(${rgba})`;
+      // ctx2.stroke();
     }
   });
 }

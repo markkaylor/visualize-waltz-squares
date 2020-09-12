@@ -16,21 +16,12 @@ canvas.width = size * dpr;
 ctx.scale(dpr, dpr);
 ctx.translate(size / 2, size / 2);
 
-// const canvas2 = document.getElementById("canvs");
-// ctx2 = canvas2.getContext("2d");
-
-// canvas2.height = size * dpr;
-// canvas2.width = size * dpr;
-// ctx2.scale(dpr, dpr);
-// ctx2.translate(size / 2, size / 2);
-
 ctx.globalCompositeOperation = "color";
-// ctx2.globalCompositeOperation = "color";
 
 let midiData;
 const getMidi = async () => {
   const result = await axios.get(
-    "http://localhost:8080/006-b-flat-waltz-piano.mid",
+    "http://localhost:8080/006-b-flat-waltz-piano-v2.mid",
     {
       responseType: "arraybuffer",
     }
@@ -43,7 +34,7 @@ const getMidi = async () => {
 let mp3Data;
 const getAudio = async () => {
   const result = await axios.get(
-    "http://localhost:8080/006-b-flat-waltz-piano.mp3",
+    "http://localhost:8080/006-b-flat-waltz-piano-v2.mp3",
     {
       responseType: "arraybuffer",
     }
@@ -86,7 +77,6 @@ async function visualize() {
       alpha = event.velocity;
       rgba = `${rgb}, 0.${alpha}`;
       ctx.lineWidth = event.velocity;
-      // ctx2.lineWidth = event.velocity;
     }
 
     if (
@@ -99,18 +89,6 @@ async function visualize() {
       ctx.rect(0 - squareSize / 2, 0 - squareSize / 2, squareSize, squareSize);
       ctx.strokeStyle = `rgba(${rgba})`;
       ctx.stroke();
-    }
-
-    if (
-      (event.track === 2 && event.name === "Note on") ||
-      (event.name === "Controller Change" &&
-        event.number === 64 &&
-        event.value === 127)
-    ) {
-      // ctx2.beginPath();
-      // ctx2.rect(0 - squareSize / 2, 0 - squareSize / 2, squareSize, squareSize);
-      // ctx2.strokeStyle = `rgba(${rgba})`;
-      // ctx2.stroke();
     }
   });
 }

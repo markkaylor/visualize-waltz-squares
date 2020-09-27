@@ -28,24 +28,18 @@ ctx.globalCompositeOperation = "color";
 ctx2.globalCompositeOperation = "color";
 
 const getMidi = async () => {
-  const result = await axios.get(
-    "http://localhost:8080/006-b-flat-waltz-piano-v2.mid",
-    {
-      responseType: "arraybuffer",
-    }
-  );
+  const result = await axios.get("./assets/006-b-flat-waltz-piano-v2.mid", {
+    responseType: "arraybuffer",
+  });
   const { data } = result;
   return data;
 };
 
 let mp3Data;
 const getAudio = async () => {
-  const result = await axios.get(
-    "http://localhost:8080/006-b-flat-waltz-piano-v2.mp3",
-    {
-      responseType: "arraybuffer",
-    }
-  );
+  const result = await axios.get("./assets/006-b-flat-waltz-piano-v2.mp3", {
+    responseType: "arraybuffer",
+  });
   const { data } = result;
   mp3Data = await audioContext.decodeAudioData(data);
   return mp3Data;
@@ -70,7 +64,6 @@ async function visualize() {
     let pitch;
     let note;
     let squareSize;
-    console.log(event);
 
     let rgb;
     let alpha;
@@ -95,7 +88,6 @@ async function visualize() {
           event.number === 64 &&
           event.value === 127)
       ) {
-        console.log("lh");
         ctx.beginPath();
         ctx.rect(
           0 - squareSize / 2,
@@ -115,7 +107,6 @@ async function visualize() {
           event.number === 64 &&
           event.value === 127)
       ) {
-        console.log("rh");
         ctx2.beginPath();
         ctx2.rect(
           0 - squareSize / 2,

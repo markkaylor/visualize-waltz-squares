@@ -18,7 +18,7 @@ ctx.translate(size / 2, size / 2);
 ctx.globalCompositeOperation = "color";
 
 const getMidi = async () => {
-  const result = await axios.get("./006-b-flat-waltz-piano-v2.mid", {
+  const result = await axios.get("./assets/006-b-flat-waltz-piano-v2.mid", {
     responseType: "arraybuffer",
   });
 
@@ -27,7 +27,7 @@ const getMidi = async () => {
 };
 
 const getAudio = async () => {
-  const result = await axios.get("./006-b-flat-waltz-piano-v2.mp3", {
+  const result = await axios.get("./assets/006-b-flat-waltz-piano-v2.mp3", {
     responseType: "arraybuffer",
   });
   const { data } = result;

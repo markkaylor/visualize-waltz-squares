@@ -17,12 +17,6 @@ ctx.translate(size / 2, size / 2);
 
 ctx.globalCompositeOperation = "color";
 
-function responseArrayBuffer(response) {
-  if (!response.ok)
-    throw new Error(response.status + " " + response.statusText);
-  return response.arrayBuffer();
-}
-
 const getMidi = async () => {
   const result = await axios.get("./006-b-flat-waltz-piano-v2.mid", {
     responseType: "arraybuffer",

@@ -2,7 +2,6 @@ const axios = require("axios");
 const pitchInfo = require("./pitchInfo.json");
 
 const MidiPlayer = require("midi-player-js");
-
 const audioContext = new AudioContext();
 
 const canvas = document.getElementById("canvas");
@@ -18,29 +17,28 @@ ctx.translate(size / 2, size / 2);
 
 ctx.globalCompositeOperation = "color";
 
-let midiData;
+function responseArrayBuffer(response) {
+  if (!response.ok)
+    throw new Error(response.status + " " + response.statusText);
+  return response.arrayBuffer();
+}
+
 const getMidi = async () => {
-  const result = await axios.get(
-    "http://localhost:8080/006-b-flat-waltz-piano-v2.mid",
-    {
-      responseType: "arraybuffer",
-    }
-  );
+  const result = await axios.get("./006-b-flat-waltz-piano-v2.mid", {
+    responseType: "arraybuffer",
+  });
+
+  console.log(result);
   const { data } = result;
-  midiData = data;
   return data;
 };
 
-let mp3Data;
 const getAudio = async () => {
-  const result = await axios.get(
-    "http://localhost:8080/006-b-flat-waltz-piano-v2.mp3",
-    {
-      responseType: "arraybuffer",
-    }
-  );
+  const result = await axios.get("./006-b-flat-waltz-piano-v2.mp3", {
+    responseType: "arraybuffer",
+  });
   const { data } = result;
-  mp3Data = await audioContext.decodeAudioData(data);
+  const mp3Data = await audioContext.decodeAudioData(data);
   return mp3Data;
 };
 
@@ -63,8 +61,6 @@ async function visualize() {
     let pitch;
     let note;
     let squareSize;
-    console.log(event);
-
     let rgb;
     let alpha;
     let rgba;

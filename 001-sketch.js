@@ -28,7 +28,6 @@ const getMidi = async () => {
     responseType: "arraybuffer",
   });
 
-  console.log(result);
   const { data } = result;
   return data;
 };

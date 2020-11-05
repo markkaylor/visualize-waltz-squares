@@ -13,7 +13,6 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.20.0",
-    "midi-player-js": "^2.0.13",
-    "p5": "^1.1.9"
+    "midi-player-js": "^2.0.13"
   }
 }

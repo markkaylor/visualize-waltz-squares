@@ -2,11 +2,11 @@
   "name": "sketches",
   "version": "1.0.0",
   "description": "",
-  "main": "001-sketch.js",
+  "main": "src/001-sketch.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "browserify 001-sketch.js -o static/bundle.js",
-    "watch": "watchify 001-sketch.js -o static/bundle.js --debug --verbose"
+    "build": "browserify src/001-sketch.js -o static/bundle.js",
+    "watch": "watchify src/001-sketch.js -o static/bundle.js --debug --verbose"
   },
   "keywords": [],
   "author": "",
